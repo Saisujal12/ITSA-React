@@ -1,7 +1,27 @@
 import { Link } from 'react-router'
 import { FOOTER_COLUMNS } from '../../data/navigation'
-import { LOGO, SITE } from '../../data/site'
+import { LOGO, SITE, SOCIAL } from '../../data/site'
 import s from './Footer.module.css'
+
+// lucide-react no longer ships brand icons; this matches its outline style.
+function InstagramIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+    </svg>
+  )
+}
 
 export default function Footer() {
   return (
@@ -17,10 +37,18 @@ export default function Footer() {
               {SITE.branch.toUpperCase()}
               <br />
               {SITE.department}, {SITE.college}
-              <br />
-              <br />
-              {SITE.motto}
             </p>
+            <div className={s.social}>
+              <a
+                href={SOCIAL.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${SITE.name} on Instagram`}
+                title="Instagram"
+              >
+                <InstagramIcon />
+              </a>
+            </div>
           </div>
 
           {FOOTER_COLUMNS.map((column) => (

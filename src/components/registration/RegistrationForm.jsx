@@ -444,6 +444,8 @@ export default function RegistrationForm({
           >
             <img
               src={LOGO.src}
+              srcSet={LOGO.srcSet}
+              sizes="42px"
               width="42"
               height="42"
               alt=""

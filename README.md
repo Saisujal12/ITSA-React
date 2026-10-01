@@ -1,77 +1,131 @@
-# IT Association KITSW — React website
+# IT Students Association KITSW — website
 
-React + Vite + React Router rebuild of the IT Association website (previously
-static HTML/CSS/JS in the `IT-Association-` repository). Content, visual
-identity, registration flow and admin tools were migrated as-is; the Express
-backend is unchanged and still lives in `IT-Association-/backend`.
+Full-stack website for the IT Students Association, KITSW:
+
+- **Frontend** — React + Vite + React Router single-page app (`src/`, `public/`, `index.html`).
+- **Backend** — Express API (`server/`) that writes registrations to Google
+  Sheets, sends status emails through Gmail/Nodemailer and handles admin login
+  with a signed, event-scoped session cookie.
+- **Vercel serverless** — `api/index.js` exports the same Express app, so in
+  production the site and the API are served from one origin.
+
+```
+Browser ──► /            static SPA (dist/, built by Vite)
+        └─► /api/*       Express app  (Vercel: api/index.js · local: server/server.js)
+                            ├─ Google Sheets  (one spreadsheet per event)
+                            └─ Gmail SMTP     (registration / status emails)
+```
 
 ## Running locally
 
 ```bash
-npm install
-npm run dev        # http://localhost:5173
-npm run lint
-npm run build      # production build in dist/
-npm run preview    # serve the production build
+npm ci
+cp .env.example .env    # fill in — see "Environment variables"
 ```
 
-The site calls the backend at `/api/...`. In development and preview, Vite
-proxies `/api` to `http://127.0.0.1:5000` (see `vite.config.js`), which keeps
-the admin session cookie first-party. Start the backend separately:
+Start the backend and the frontend in two terminals:
 
 ```bash
-cd ../IT-Association-/backend
-npm install
-npm run dev        # needs its .env and Google service-account file
+npm run server          # Express on PORT (default 5000); `npm run server:dev` reloads on change
+npm run dev             # Vite on http://localhost:5173, proxies /api to DEV_API_PROXY_TARGET
 ```
 
-> macOS: the AirPlay Receiver also listens on port 5000. If the backend fails
-> to start or the proxy reaches AirPlay, disable AirPlay Receiver or run the
-> backend on another port (`PORT=5050`) and set `DEV_API_PROXY_TARGET`.
+The browser calls relative `/api/...` URLs. Vite's dev and preview servers
+proxy `/api` to `DEV_API_PROXY_TARGET` (default `http://127.0.0.1:5000`),
+which keeps the admin cookie first-party.
 
-### Environment (`.env`, see `.env.example`)
+> **macOS:** AirPlay Receiver listens on port 5000. Either disable it, or set
+> `PORT=5050` and `DEV_API_PROXY_TARGET=http://127.0.0.1:5050` in your local `.env`.
 
-| Variable | Purpose |
+Other scripts:
+
+```bash
+npm run lint
+npm run build           # production build in dist/
+npm run preview         # serve the production build (also proxies /api)
+```
+
+## Environment variables
+
+All variables are listed, without values, in `.env.example`. Locally they live
+in the root `.env` (git-ignored, read by both Vite and Express); in production
+they are set in the Vercel project settings. Never commit real values.
+
+| Group | Variables |
 | --- | --- |
-| `VITE_API_URL` | Backend base URL used by the browser. Empty = same-origin `/api` (recommended). |
-| `DEV_API_PROXY_TARGET` | Where the dev/preview server proxies `/api`. Default `http://127.0.0.1:5000`. |
+| Frontend | `VITE_API_URL` (empty = same-origin `/api`; bundled into the browser, so never secret), `DEV_API_PROXY_TARGET` |
+| Server | `PORT`, `NODE_ENV`, `FRONTEND_ORIGIN` (extra CORS origins, comma separated) |
+| Admin auth | `ADMIN_USERNAME`, `ADMIN_PASSWORD_HASH`, `ADMIN_SESSION_SECRET` |
+| Google Sheets | `GOOGLE_SERVICE_ACCOUNT_JSON` *or* `GOOGLE_SERVICE_ACCOUNT_EMAIL` + `GOOGLE_PRIVATE_KEY`; `GOOGLE_SHEET_TAB_NAME`, `GOOGLE_SHEET_ID`; `EVENT_SHEET_ID_<EVENT>` |
+| Email | `EMAIL_USER`, `EMAIL_APP_PASSWORD`; `EVENT_EMAIL_USER_<EVENT>`, `EVENT_EMAIL_PASSWORD_<EVENT>` |
 
-### Deployment
+`<EVENT>` is one of `LLM`, `CODE_BUILD`, `INNOVATION`, `CYBER_QUEST`,
+`DESIGN_DEPLOY`, `TECH_CONNECT` (and `EVENT6` for sheets).
 
-The app is a single-page app: the host must serve `index.html` for every
-unknown path so deep links and the legacy `.html` URLs resolve. Either serve
-the site and the API from the same origin (reverse proxy `/api` to Express),
-or set `VITE_API_URL` and configure CORS/cookies for cross-site use
-(backend change — see "Deferred backend work").
+`ADMIN_PASSWORD_HASH` is an scrypt hash in `salt:key` form. Generate one
+interactively (the password is typed, never stored in the repo):
+
+```bash
+node server/scripts/createAdminHash.js
+```
+
+## API
+
+| Endpoint | Used by | Notes |
+| --- | --- | --- |
+| `POST /api/registrations` | Registration form | `{ eventId, event, name, collegeType, collegeName, rollNo, branch, email, phone, amount, transactionId }` → `201 { success, message, registrationId, status }`. Appends to the event's sheet and emails the student. |
+| `GET /api/admin/events` | Admin login | Events an admin can sign in to. |
+| `POST /api/admin/login` | Admin login | `{ username, password, eventId }` → sets the `it_admin_session` cookie, scoped to that event. |
+| `GET /api/admin/check` | Admin pages | `{ authenticated, admin }`. |
+| `GET /api/admin/registrations` | Admin dashboard | Registrations for the session's event: `{ registrations, event }`. |
+| `PUT /api/admin/registrations/:rowNumber/status` | Verify / reject | `{ status: "VERIFIED" \| "REJECTED" }`; the event comes from the session. Emails the student. |
+| `POST /api/admin/logout` | Admin dashboard | Clears the session cookie. |
+| `GET /api/health` | Monitoring | Health check. |
+
+## Deployment (Vercel)
+
+`vercel.json` builds the frontend with `npm run build` into `dist/` and
+deploys `api/index.js` as a serverless function:
+
+- `/api/(.*)` → the Express function.
+- Every other path → `index.html` (SPA fallback; existing static files are served first).
+- `/assets/*` (hashed build files) are cached for a year.
+
+Set all backend environment variables in Vercel. Leave `VITE_API_URL` empty
+so the browser calls the same-origin function.
 
 ## Routes
 
-| Route | Legacy page |
+| Route | Page |
 | --- | --- |
-| `/` | `index.html` |
-| `/sumshodhini` | `pages/sumshodini.html` |
-| `/about` | `pages/about.html` |
-| `/association` | `pages/association.html` |
-| `/events` | `pages/events.html` |
-| `/workshops` | `pages/workshop.html` |
-| `/gallery` | `pages/gallery.html` |
-| `/register` | `pages/register.html` |
-| `/contact` | `pages/contact.html` |
-| `/admin/login`, `/admin` | `pages/admin-login.html`, `pages/admin-dashboard.html` |
+| `/` | Home |
+| `/sumshodhini` | Sumshodhini fest |
+| `/events`, `/workshops` | Events, workshops |
+| `/register` | Registration (`?day=day1\|day2`, `?event=<id>&from=<day2\|events\|workshops\|day1>`) |
+| `/about`, `/association` | About, association body |
+| `/gallery`, `/contact` | Gallery, contact |
+| `/admin` → `/admin/login`, `/admin/dashboard` | Admin |
 
-`/index.html`, every `/pages/*.html` URL and the spelling variants
-`/samshodini`, `/sumshodini`, `/samshodhini` redirect to the new routes,
-keeping query strings and hashes (`/pages/register.html?event=llm` →
-`/register?event=llm`).
-
-Registration keeps the legacy query contract: `/register`,
-`/register?day=day2`, `/register?day=day1`, `/register?event=<id>&from=<day2|events|workshops|day1>`.
+Legacy URLs redirect to the new routes, keeping query strings and hashes:
+`/index.html`, `/pages/*.html` (e.g. `/pages/register.html?event=llm` →
+`/register?event=llm`), and the spellings `/samshodini`, `/sumshodini`,
+`/samshodhini`, `/workshop`.
 
 ## Project structure
 
 ```
+api/index.js       Vercel serverless entry (re-exports server/app.js)
+server/
+  app.js           Express app: helmet, CORS, JSON parsing, routes
+  server.js        local entry (listens on PORT)
+  routes/          registrationRoutes, adminRoutes
+  controllers/     registration + admin handlers
+  middleware/      requireAdmin (session cookie)
+  services/        adminAuth (scrypt + signed session), emailService (Nodemailer)
+  config/          googleSheets (per-event sheets), adminEvents
+  scripts/         createAdminHash.js
 src/
-  assets/images/   brand, gallery, posters, qr, team (optimised WebP; EXIF/GPS stripped)
+  assets/images/   brand, gallery (optimised WebP)
   components/      layout (Navbar, Footer, layouts), ui, and page-specific components
   data/            site, navigation, events, workshops, team, gallery — all content lives here
   hooks/           reveal, carousel, 3D tilt, magnetic, media queries, visibility, …
@@ -84,24 +138,19 @@ src/
 ## Updating content
 
 - **Events / workshops** — `src/data/events.js` is the single source for the
-  events page, workshops page and registration. Entries marked `verify` have
-  two differing legacy descriptions; both are kept until the team picks one.
-- **Registration fees** — every event has `fee: null`. The backend requires an
-  `amount`, so the form shows "Registration fee not yet announced" and
-  cannot be submitted until a verified fee (a number in rupees) is added.
-- **Team** — `src/data/team.js`. Add real names to `PEOPLE`; they appear on
-  both the About and Association pages. Placeholder names from the legacy
-  site (`HOD NAME`, `Joint Secretary 1`, …) are shown until then.
-- **Previous workshops** — `src/data/workshops.js` holds the legacy sample
-  records (`sample: true`, labelled "Sample record" on the page).
-- **Gallery** — `src/data/gallery.js`. Drive links set to `null` were
-  placeholders and are hidden until real links are added.
+  events page, workshops page and registration form. Event IDs must match the
+  backend (`server/config/adminEvents.js`, `registrationController.js`).
+- **Registration fees** — the `fee` on each event in `src/data/events.js` is
+  sent as `amount`. An event without a numeric fee cannot be registered for.
+- **Team** — `src/data/team.js` (shown on the About and Association pages).
+- **Previous workshops** — `src/data/workshops.js`.
+- **Gallery** — `src/data/gallery.js`. Drive links set to `null` are hidden.
 
 ## Adding missing images
 
 Images are resolved by name from `src/assets/images` (`src/utils/assets.js`).
 Drop a file with the expected name (`.png`, `.jpg` or `.webp`) and it appears
-automatically — no code changes. Until then a designed placeholder is shown.
+automatically; until then a designed placeholder is shown.
 
 | Folder | Expected files |
 | --- | --- |
@@ -110,27 +159,5 @@ automatically — no code changes. Until then a designed placeholder is shown.
 | `gallery/` | `inaugural-1`, `inaugural-2`, `sumshodini-workshop-1` … `sumshodini-workshop-6` |
 | `team/` | `hod`, `faculty-coordinator-1`, `faculty-coordinator-2`, `president`, `student-coordinator`, `vice-president`, `general-secretary`, `treasurer`, `pr-media`, `technical-head` (+ `<role>-name` images), `joint-secretary-01` … `12`, `executive-member-01` … `12` |
 
-Large photos: provide `name-800.webp` and `name-1600.webp` to get a
-responsive `srcset`, or a single file (it is used as-is).
-
-## Deferred backend work (not part of the migration)
-
-The backend was intentionally left unchanged. Issues found for a separate
-hardening pass:
-
-1. Registration values are written to Google Sheets with `USER_ENTERED`, so
-   a value starting with `=` is evaluated as a formula (formula injection).
-   The frontend validation rejects such names/branches, but the API must
-   enforce it too.
-2. `GET /api/test-email` is unauthenticated and sends mail to a hard-coded
-   address.
-3. CORS reflects any origin with credentials (`origin: true`).
-4. No rate limiting on `/api/admin/login`; plain-text credential comparison.
-5. Session cookie has `secure: false`; `SESSION_SECRET` is not validated at startup.
-6. No server-side length/format validation on registration fields.
-7. Registration IDs use 4 random digits (collisions possible); no duplicate
-   UTR/submission check.
-8. Status updates address Sheet rows by row number, which breaks if the
-   sheet is sorted or edited.
-9. `/api/admin/check` returns 401 when logged out, which browsers log as a
-   failed request in the console on the admin login redirect.
+Large photos: provide `name-800.webp` and `name-1600.webp` for a responsive
+`srcset`, or a single file (used as-is).

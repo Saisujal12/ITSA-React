@@ -2,6 +2,29 @@ const BASE_URL = (
   import.meta.env.VITE_API_URL ?? ""
 ).replace(/\/$/, "");
 
+/*
+ * Shown when the response has no usable JSON `message` (e.g. an HTML error
+ * page from a proxy or host), so users never see raw server output.
+ */
+const STATUS_MESSAGES = {
+  400: "Some details were not accepted. Please check them and try again.",
+  401: "You are not signed in, or your session has expired.",
+  403: "You do not have permission to do that.",
+  404: "The service could not be found. Please try again later.",
+  409: "This conflicts with an existing record.",
+  413: "The request is too large.",
+  429: "Too many requests. Please wait a few minutes and try again.",
+};
+
+const SERVER_ERROR_MESSAGE =
+  "The server is having trouble right now. Please try again in a few minutes.";
+
+const fallbackMessage = (status) =>
+  STATUS_MESSAGES[status] ??
+  (status >= 500
+    ? SERVER_ERROR_MESSAGE
+    : `Request failed (${status}).`);
+
 export class ApiError extends Error {
   constructor(
     message,
@@ -121,8 +144,12 @@ export async function request(
 
   if (!response.ok) {
     throw new ApiError(
-      data?.message ||
-        `Request failed (${response.status}).`,
+      typeof data?.message ===
+        "string" && data.message
+        ? data.message
+        : fallbackMessage(
+            response.status,
+          ),
       {
         status:
           response.status,

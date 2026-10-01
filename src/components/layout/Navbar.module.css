@@ -57,22 +57,23 @@
 .brand-text {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
   line-height: 1;
 }
 
 .brand-text strong {
   color: #272522;
-  font-size: 11px;
+  font-size: clamp(13px, 0.55vw + 8px, 17px);
   font-weight: 900;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
 }
 
 .brand-text span {
   color: #77716a;
-  font-size: 7px;
+  font-size: 9px;
   font-weight: 800;
-  letter-spacing: 4px;
+  letter-spacing: 4.5px;
 }
 
 /* Desktop nav */
@@ -340,6 +341,21 @@
   font-weight: 800;
 }
 
+/* Small laptops: tighten spacing so the full brand name, links and Register fit. */
+@media (min-width: 901px) and (max-width: 1100px) {
+  .nav-container {
+    gap: 16px;
+  }
+
+  .desktop-nav {
+    gap: 2px;
+  }
+
+  .nav-link {
+    padding: 0 10px;
+  }
+}
+
 @media (max-width: 900px) {
   .desktop-nav,
   .register-btn {
@@ -359,13 +375,17 @@
 }
 
 @media (max-width: 600px) {
+  .brand-text {
+    gap: 5px;
+  }
+
   .brand-text strong {
-    font-size: 10px;
+    font-size: 13px;
   }
 
   .brand-text span {
-    font-size: 6px;
-    letter-spacing: 3px;
+    font-size: 8px;
+    letter-spacing: 3.5px;
   }
 
   .menu-button {
@@ -380,5 +400,16 @@
     width: 45px;
     height: 45px;
     min-width: 45px;
+  }
+}
+
+/* Very narrow phones: keep the full name on one line beside the menu button. */
+@media (max-width: 360px) {
+  .brand {
+    gap: 8px;
+  }
+
+  .brand-text strong {
+    font-size: 11.5px;
   }
 }

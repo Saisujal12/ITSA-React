@@ -31,7 +31,7 @@ export default function Gallery() {
               OUR <span>GALLERY</span>
             </h1>
             <p>
-              Snapshots of the ideas, energy and people that turn the IT Association into a living
+              Snapshots of the ideas, energy and people that turn the IT Students Association into a living
               community.
             </p>
             <div className={s.galleryHeroMeta}>

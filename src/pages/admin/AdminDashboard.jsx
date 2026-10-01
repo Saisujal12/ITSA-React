@@ -173,12 +173,7 @@ function formatDate(
 */
 
 export default function AdminDashboard() {
-  useDocumentTitle(
-    "Admin Dashboard | IT Association",
-    {
-      raw: true,
-    },
-  );
+  useDocumentTitle("Admin Dashboard");
 
   const navigate =
     useNavigate();
@@ -566,7 +561,7 @@ export default function AdminDashboard() {
           <ShieldCheck />
 
           <span>
-            IT ASSOCIATION
+            IT STUDENTS ASSOCIATION
           </span>
         </div>
 

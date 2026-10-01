@@ -8,7 +8,7 @@ const pad = (n) => String(n).padStart(2, '0')
 
 export default function AlbumCard({ album, number, reverse }) {
   const photos = album.photos.map((photo) => ({ ...photo, image: resolveImage(photo.image) })).filter((photo) => photo.image)
-  const { index, goTo, next, prev, regionProps } = useCarousel(photos.length)
+  const { index, goTo, next, prev, isRevealed, regionProps } = useCarousel(photos.length)
   const titleId = `album-${album.id}`
 
   return (
@@ -37,14 +37,16 @@ export default function AlbumCard({ album, number, reverse }) {
                 aria-label={`${photoIndex + 1} of ${photos.length}`}
                 aria-hidden={photoIndex !== index}
               >
-                <img
-                  src={photo.image.src}
-                  srcSet={photo.image.srcSet}
-                  sizes="(max-width: 1100px) 100vw, 65vw"
-                  alt={photo.alt}
-                  loading="lazy"
-                  decoding="async"
-                />
+                {isRevealed(photoIndex) && (
+                  <img
+                    src={photo.image.src}
+                    srcSet={photo.image.srcSet}
+                    sizes="(max-width: 1100px) 100vw, 65vw"
+                    alt={photo.alt}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                )}
               </div>
             ))}
 

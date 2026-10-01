@@ -14,6 +14,7 @@ import {
 import AboutTeam from '../components/team/AboutTeam'
 import { LOGO, SITE } from '../data/site'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
+import { usePrefersReducedMotion } from '../hooks/useMediaQuery'
 import { cx } from '../utils/cx'
 import s from './About.module.css'
 
@@ -58,6 +59,13 @@ const WHAT_WE_DO = [
 
 export default function About() {
   useDocumentTitle('About Association')
+  const reduceMotion = usePrefersReducedMotion()
+
+  // Smooth-scroll only this in-page jump; route changes should reset scroll instantly.
+  const scrollToIntro = (event) => {
+    event.preventDefault()
+    document.getElementById('about')?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' })
+  }
 
   return (
     <div className={s.page}>
@@ -80,10 +88,10 @@ export default function About() {
               projects and students grow together.
             </p>
             <div className={s.aboutHeroActions}>
-              <Link to={{ hash: '#about' }} className={s.aboutPrimaryBtn}>
+              <a href="#about" className={s.aboutPrimaryBtn} onClick={scrollToIntro}>
                 Explore Association
                 <ArrowDown aria-hidden="true" />
-              </Link>
+              </a>
               <Link to="/register" className={s.aboutSecondaryBtn}>
                 Join Us
                 <ArrowUpRight aria-hidden="true" />
@@ -109,7 +117,15 @@ export default function About() {
             <div className={cx(s.visualOrbit, s.orbitInner)} />
             <div className={s.visualCore}>
               <div className={s.coreInner}>
-                <img className={s.aboutCoreLogo} src={LOGO.large} width="132" height="137" alt="" />
+                <img
+                  className={s.aboutCoreLogo}
+                  src={LOGO.src}
+                  srcSet={LOGO.srcSet}
+                  sizes="(max-width: 420px) 86px, (max-width: 700px) 100px, 132px"
+                  width="132"
+                  height="137"
+                  alt=""
+                />
               </div>
             </div>
             {FLOAT_CARDS.map(({ className, icon: Icon, title, text }) => (
@@ -144,7 +160,7 @@ export default function About() {
           </div>
           <div className={s.aboutIntroCopy} data-reveal="">
             <p>
-              The IT Association is a student-driven platform that connects students, faculty and
+              The IT Students Association is a student-driven platform that connects students, faculty and
               technology enthusiasts through technical activities, workshops, competitions and
               events.
             </p>
@@ -240,9 +256,6 @@ export default function About() {
               <span>{tag}</span>
               <h3>{title}</h3>
               <p>{text}</p>
-              <div className={s.featureArrow} aria-hidden="true">
-                →
-              </div>
             </article>
           ))}
         </div>
@@ -259,7 +272,7 @@ export default function About() {
           </div>
           <p>
             Faculty and student leaders working together to guide, coordinate and grow the IT
-            Association. <Link to="/association">View the full Association Body →</Link>
+            Students Association. <Link to="/association">View the full Association Body →</Link>
           </p>
         </div>
         <AboutTeam />
@@ -276,7 +289,7 @@ export default function About() {
             Learn something. <strong>Build something.</strong>
           </h2>
           <p>
-            Join the IT Association and become part of a community built around technology,
+            Join the IT Students Association and become part of a community built around technology,
             creativity and collaboration.
           </p>
           <Link to="/register" className={s.ctaButton}>

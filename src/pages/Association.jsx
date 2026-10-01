@@ -80,7 +80,7 @@ export default function Association() {
           <p className={s.sectionLabel}>FACULTY LEADERSHIP</p>
           <h2 id="faculty-title">Guided by experience.</h2>
           <p>
-            The IT Association works under the guidance of the department leadership and faculty
+            The IT Students Association works under the guidance of the department leadership and faculty
             coordinators.
           </p>
         </div>
@@ -95,7 +95,7 @@ export default function Association() {
         <div className={s.sectionHeading}>
           <p className={s.sectionLabel}>FOURTH YEAR</p>
           <h2 id="core-title">Core Association Body.</h2>
-          <p>The fourth-year students form the main student leadership body of the IT Association.</p>
+          <p>The fourth-year students form the main student leadership body of the IT Students Association.</p>
         </div>
         <div className={s.leadershipGrid}>
           {ASSOCIATION_CORE_BODY.map((member) => (

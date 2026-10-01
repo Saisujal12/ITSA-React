@@ -628,32 +628,17 @@
 .sam-intro-grid {
   width: min(1200px, calc(100% - 100px));
   margin: 0 auto;
-  display: grid;
-  grid-template-columns: 220px 1fr;
-  gap: 80px;
-}
-
-.sam-section-label {
-  color: var(--sam-red);
-  font-size: 9px;
-  font-weight: 900;
-  letter-spacing: .2em;
-}
-
-.sam-section-label span {
-  display: block;
-  margin-bottom: 15px;
-  color: var(--sam-gold);
-  font-size: 35px;
-  letter-spacing: -.06em;
 }
 
 .sam-intro-content {
-  max-width: 850px;
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
 }
 
 .sam-intro-content h2 {
   max-width: 850px;
+  margin: 0 auto;
   font-family: Georgia, serif;
   font-size: clamp(45px, 6vw, 80px);
   line-height: .94;
@@ -666,7 +651,7 @@
 
 .sam-intro-content p {
   max-width: 730px;
-  margin-top: 30px;
+  margin: 30px auto 0;
   color: var(--sam-muted);
   font-size: 14px;
   line-height: 1.9;
@@ -1561,8 +1546,6 @@
   }
   .sam-intro-grid {
     width: calc(100% - 40px);
-    grid-template-columns: 1fr;
-    gap: 35px;
   }
   .sam-section-heading,
   .sam-feature-grid,

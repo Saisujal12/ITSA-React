@@ -56,16 +56,8 @@
   color: var(--primary);
   font-size: 10px;
   font-weight: 900;
-  letter-spacing: 3px;
+  letter-spacing: 4px;
   text-transform: uppercase;
-}
-
-.hero-small-title::before {
-  content: "";
-  width: 44px;
-  height: 2px;
-  border-radius: 999px;
-  background: var(--primary);
 }
 
 .hero h1 {
@@ -84,10 +76,6 @@
   margin-top: 20px;
   font-size: 15px;
   line-height: 1.75;
-}
-
-.hero-description strong {
-  color: var(--text-dark);
 }
 
 .hero-buttons {
@@ -262,9 +250,14 @@
   font-size: 20px;
 }
 
-.feature-icon img {
-  width: 34px;
-  height: auto;
+.feature-icon svg {
+  width: 23px;
+  height: 23px;
+}
+
+/* "Our Approach" label without the leading rule. */
+:global(.section-label).label-plain::before {
+  display: none;
 }
 
 .feature-card h3 {

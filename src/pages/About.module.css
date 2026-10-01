@@ -756,13 +756,8 @@
   border-right: 1px solid var(--about-border);
   border-bottom: 1px solid var(--about-border);
   background: transparent;
-  transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1), background 0.4s ease, color 0.4s ease;
-}
-
-.feature-card:hover {
-  color: #ffffff;
-  background: var(--about-red);
-  transform: translateY(-6px);
+  cursor: default;
+  transition: background 0.4s ease, color 0.4s ease;
 }
 
 .feature-card::after {
@@ -777,11 +772,6 @@
   transition: transform 0.5s ease;
 }
 
-.feature-card:hover::after {
-  transform: scale(1.8);
-  background: rgba(255, 255, 255, 0.07);
-}
-
 .feature-card-number {
   position: absolute;
   top: 20px;
@@ -790,10 +780,6 @@
   font-size: 34px;
   line-height: 1;
   font-weight: 900;
-}
-
-.feature-card:hover .feature-card-number {
-  color: rgba(255, 255, 255, 0.2);
 }
 
 .feature-icon {
@@ -816,13 +802,6 @@
   height: 22px;
 }
 
-.feature-card:hover .feature-icon {
-  color: #ffffff;
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.18);
-  transform: rotate(-5deg);
-}
-
 .feature-card > span {
   position: relative;
   z-index: 2;
@@ -832,10 +811,6 @@
   font-size: 8px;
   font-weight: 900;
   letter-spacing: 0.18em;
-}
-
-.feature-card:hover > span {
-  color: rgba(255, 255, 255, 0.65);
 }
 
 .feature-card h3 {
@@ -848,10 +823,6 @@
   letter-spacing: -0.04em;
 }
 
-.feature-card:hover h3 {
-  color: #ffffff;
-}
-
 .feature-card p {
   position: relative;
   z-index: 2;
@@ -862,23 +833,40 @@
   line-height: 1.75;
 }
 
-.feature-card:hover p {
-  color: rgba(255, 255, 255, 0.7);
-}
+/* Purely decorative highlight; these cards are content, not links. */
+@media (hover: hover) {
+  .feature-card:hover {
+    color: #ffffff;
+    background: var(--about-red);
+  }
 
-.feature-arrow {
-  position: absolute;
-  z-index: 2;
-  right: 27px;
-  bottom: 25px;
-  color: var(--about-red);
-  font-size: 24px;
-  transition: transform 0.35s ease, color 0.35s ease;
-}
+  .feature-card:hover::after {
+    transform: scale(1.8);
+    background: rgba(255, 255, 255, 0.07);
+  }
 
-.feature-card:hover .feature-arrow {
-  color: #ffffff;
-  transform: translateX(5px);
+  .feature-card:hover .feature-card-number {
+    color: rgba(255, 255, 255, 0.2);
+  }
+
+  .feature-card:hover .feature-icon {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.18);
+    transform: rotate(-5deg);
+  }
+
+  .feature-card:hover > span {
+    color: rgba(255, 255, 255, 0.65);
+  }
+
+  .feature-card:hover h3 {
+    color: #ffffff;
+  }
+
+  .feature-card:hover p {
+    color: rgba(255, 255, 255, 0.7);
+  }
 }
 /* TEAM */
 

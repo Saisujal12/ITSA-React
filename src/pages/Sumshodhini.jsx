@@ -220,16 +220,12 @@ export default function Sumshodhini() {
       {/* ABOUT */}
       <section className={s.samIntro} id="about" aria-labelledby="sam-about-title">
         <div className={s.samIntroGrid}>
-          <div className={s.samSectionLabel}>
-            <span>03</span>
-            ABOUT THE EVENT
-          </div>
           <div className={s.samIntroContent}>
             <h2 id="sam-about-title">
               Where <strong>ideas</strong> become possibilities.
             </h2>
             <p>
-              {SITE.fest} is the flagship technical event of the IT Association, designed to give
+              {SITE.fest} is the flagship technical event of the IT Students Association, designed to give
               students a space to question, experiment, collaborate and present ideas beyond the
               classroom.
             </p>

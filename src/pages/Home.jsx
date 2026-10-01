@@ -1,12 +1,14 @@
 import { Link } from 'react-router'
+import { BookOpen, CodeXml, Presentation, TrendingUp } from 'lucide-react'
 import IdCard3D from '../components/home/IdCard3D'
-import { LOGO, SITE } from '../data/site'
+import LatestUpdates from '../components/home/LatestUpdates'
+import { LOGO, SITE, pageTitle } from '../data/site'
 import { useDocumentTitle } from '../hooks/useDocumentTitle'
 import s from './Home.module.css'
 
 const STATS = [
-  { value: 'IT', label: 'ASSOCIATION' },
-  { value: String(SITE.year), label: 'LEARN · BUILD · GROW' },
+  { value: 'IT', label: 'STUDENTS ASSOCIATION' },
+  { value: String(SITE.year), label: SITE.college },
   { value: '∞', label: 'POSSIBILITIES' },
 ]
 
@@ -21,27 +23,27 @@ const APPROACH = [
   {
     title: 'Learn',
     text: 'Discover technologies, concepts and ideas that extend learning beyond the regular classroom.',
-    logo: true,
+    Icon: BookOpen,
   },
   {
     title: 'Build',
     text: 'Apply knowledge through projects, practical activities and hands-on experiences.',
-    glyph: '⚡',
+    Icon: CodeXml,
   },
   {
     title: 'Experience',
     text: `Take part in workshops, technical activities, competitions and ${SITE.fest} events.`,
-    glyph: '◈',
+    Icon: Presentation,
   },
   {
     title: 'Grow',
     text: 'Develop confidence, communication, teamwork and leadership through real experiences.',
-    glyph: '↗',
+    Icon: TrendingUp,
   },
 ]
 
 export default function Home() {
-  useDocumentTitle('IT Association | KITSW', { raw: true })
+  useDocumentTitle(pageTitle(), { raw: true })
 
   return (
     <>
@@ -49,17 +51,15 @@ export default function Home() {
       <section className={s.hero} aria-labelledby="home-title">
         <div className={s.heroContainer}>
           <div className={s.heroContent}>
-            <p className={s.heroSmallTitle}>I T S A</p>
+            <p className={s.heroSmallTitle}>ITSA</p>
 
             <h1 id="home-title">
-              IT <span>Student&apos;s Association.</span>
+              IT <span>Students Association.</span>
             </h1>
 
             <p className={s.heroDescription}>
-              The IT Association represents the spirit of the Information Technology branch through
+              The IT Students Association represents the spirit of the Information Technology branch through
               learning, innovation, practical experiences and student activities.
-              <br />
-              <strong>Learn. Build. Grow.</strong>
             </p>
 
             <div className={s.heroButtons}>
@@ -92,6 +92,8 @@ export default function Home() {
         </div>
       </section>
 
+      <LatestUpdates />
+
       {/* ABOUT */}
       <section className="section" aria-labelledby="home-about-title">
         <div className="container">
@@ -100,10 +102,13 @@ export default function Home() {
               <div>
                 <img
                   className={s.aboutLogoMark}
-                  src={LOGO.large}
+                  src={LOGO.src}
+                  srcSet={LOGO.srcSet}
+                  sizes="180px"
                   width="180"
                   height="187"
                   loading="lazy"
+                  decoding="async"
                   alt={LOGO.alt}
                 />
                 <div className={s.panelTitle}>{SITE.nameUpper}</div>
@@ -117,7 +122,7 @@ export default function Home() {
                 A platform for <span className="text-primary">future technologists.</span>
               </h2>
               <p>
-                The IT Association is a student-driven platform of the Information Technology branch
+                The IT Students Association is a student-driven platform of the Information Technology branch
                 that brings together technical learning, practical experiences, workshops, events and
                 creative ideas.
               </p>
@@ -145,12 +150,12 @@ export default function Home() {
       <section className="section section-soft" aria-labelledby="home-approach-title">
         <div className="container">
           <div className="section-heading">
-            <p className="section-label">OUR APPROACH</p>
+            <p className={`section-label ${s.labelPlain}`}>OUR APPROACH</p>
             <h2 id="home-approach-title">
               Learn. <span className="text-primary">Build.</span> Grow.
             </h2>
             <p>
-              The IT Association is built around a simple idea: learn something new, turn that
+              The IT Students Association is built around a simple idea: learn something new, turn that
               knowledge into something practical and grow through the experience.
             </p>
           </div>
@@ -159,7 +164,7 @@ export default function Home() {
             {APPROACH.map((item) => (
               <article key={item.title} className={`card ${s.featureCard}`}>
                 <div className={s.featureIcon} aria-hidden="true">
-                  {item.logo ? <img src={LOGO.src} width="34" height="35" alt="" /> : item.glyph}
+                  <item.Icon />
                 </div>
                 <h3>{item.title}</h3>
                 <p>{item.text}</p>
@@ -222,10 +227,12 @@ export default function Home() {
       <section className="section" aria-labelledby="home-cta-title">
         <div className="container">
           <div className={s.cta}>
-            <p className={s.ctaKicker}>LEARN · BUILD · GROW</p>
+            <p className={s.ctaKicker}>
+              {SITE.nameUpper} · {SITE.college}
+            </p>
             <h2 id="home-cta-title">Learn today. Build tomorrow. Grow through experience.</h2>
             <p>
-              Discover the IT Association, explore {SITE.fest} and take part in the workshops and
+              Discover the IT Students Association, explore {SITE.fest} and take part in the workshops and
               events created for the Information Technology branch.
             </p>
             <div className={s.actions}>

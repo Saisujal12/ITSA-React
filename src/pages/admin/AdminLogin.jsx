@@ -78,12 +78,7 @@ const EVENTS = [
 ];
 
 export default function AdminLogin() {
-  useDocumentTitle(
-    "Admin Login | IT Association",
-    {
-      raw: true,
-    },
-  );
+  useDocumentTitle("Admin Login");
 
   const navigate =
     useNavigate();
@@ -297,7 +292,7 @@ export default function AdminLogin() {
           <h1>
             IT{" "}
             <span>
-              ASSOCIATION
+              STUDENTS ASSOCIATION
             </span>
           </h1>
 
@@ -344,7 +339,7 @@ export default function AdminLogin() {
         <h1>
           IT{" "}
           <span>
-            ASSOCIATION
+            STUDENTS ASSOCIATION
           </span>
         </h1>
 

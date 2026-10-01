@@ -482,7 +482,7 @@
 @media (max-width: 900px) {
   .workshop-hero-grid,
   .history-heading {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 35px;
   }
   .current-workshop-card {
@@ -509,6 +509,10 @@
   }
   .workshop-hero-grid {
     margin-top: 25px;
+  }
+  /* "WORKSHOPS" is ~6.7em wide; 13vw keeps it inside the content column. */
+  .workshop-hero h1 {
+    font-size: clamp(40px, 13vw, 58px);
   }
   .workshop-hero-card {
     min-height: 240px;

@@ -10,7 +10,7 @@ const pad = (n) => String(n).padStart(2, '0')
 export default function GalleryHeroSlider({ slides }) {
   const available = slides.map((slide) => ({ ...slide, image: resolveImage(slide.image) })).filter((slide) => slide.image)
   // The legacy hero slider never paused on hover; keep that.
-  const { index, goTo, regionProps } = useCarousel(available.length, { pauseOnHover: false })
+  const { index, goTo, isRevealed, regionProps } = useCarousel(available.length, { pauseOnHover: false })
 
   return (
     <div className={s.galleryHeroArt}>
@@ -23,7 +23,7 @@ export default function GalleryHeroSlider({ slides }) {
         className={cx(s.galleryHeroPhotoCard, s.carouselRegion)}
         role="region"
         aria-roledescription="carousel"
-        aria-label="IT Association photo highlights"
+        aria-label={`${SITE.name} photo highlights`}
       >
         <div className={s.heroGallerySlider}>
           {available.map((slide, slideIndex) => (
@@ -35,14 +35,17 @@ export default function GalleryHeroSlider({ slides }) {
               aria-label={`${slideIndex + 1} of ${available.length}`}
               aria-hidden={slideIndex !== index}
             >
-              <img
-                src={slide.image.src}
-                srcSet={slide.image.srcSet}
-                sizes="(max-width: 800px) 96vw, 45vw"
-                alt={slide.alt}
-                loading={slideIndex === 0 ? 'eager' : 'lazy'}
-                decoding="async"
-              />
+              {isRevealed(slideIndex) && (
+                <img
+                  src={slide.image.src}
+                  srcSet={slide.image.srcSet}
+                  sizes="(max-width: 800px) 96vw, 45vw"
+                  alt={slide.alt}
+                  loading={slideIndex === 0 ? 'eager' : 'lazy'}
+                  fetchPriority={slideIndex === 0 ? 'high' : undefined}
+                  decoding="async"
+                />
+              )}
             </div>
           ))}
         </div>

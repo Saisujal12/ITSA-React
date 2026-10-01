@@ -46,6 +46,7 @@
 }
 
 .association-hero-content {
+  min-width: 0;
   max-width: 1100px;
 }
 
@@ -455,8 +456,9 @@
     min-height: 70vh;
     padding: 120px 6vw 70px;
   }
+  /* "ASSOCIATION" is ~5.5em wide; 15vw keeps it inside the 88vw content column. */
   .association-hero h1 {
-    font-size: clamp(65px, 18vw, 110px);
+    font-size: clamp(44px, 15vw, 110px);
   }
   .hero-description {
     margin-top: 40px;

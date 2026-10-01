@@ -8,9 +8,13 @@ import { usePageVisible } from './usePageVisible'
   (legacy gallery.html inline script): 4s autoplay, wrap-around, pause on
   hover, timer restarts after manual navigation. Also pauses while focused,
   off-screen, in a hidden tab or under reduced motion, and supports arrow
-  keys and touch swipe.
+  keys and touch swipe. `paused` lets a caller add an explicit pause control.
+
+  `isRevealed(i)` tells the slider which slides to render an image for: the
+  current and upcoming slide, plus any already shown. Stacked slides are all
+  "in the viewport", so native lazy-loading alone would fetch every photo.
 */
-export function useCarousel(count, { interval = 4000, pauseOnHover = true } = {}) {
+export function useCarousel(count, { interval = 4000, pauseOnHover = true, paused = false } = {}) {
   const [index, setIndex] = useState(0)
   const [hovered, setHovered] = useState(false)
   const [focused, setFocused] = useState(false)
@@ -26,7 +30,7 @@ export function useCarousel(count, { interval = 4000, pauseOnHover = true } = {}
   const prev = () => setIndex((current) => (current - 1 + count) % count)
 
   const running =
-    count > 1 && inView && pageVisible && !reducedMotion && !focused && !(pauseOnHover && hovered)
+    count > 1 && !paused && inView && pageVisible && !reducedMotion && !focused && !(pauseOnHover && hovered)
 
   useEffect(() => {
     if (!running) return undefined
@@ -67,5 +71,13 @@ export function useCarousel(count, { interval = 4000, pauseOnHover = true } = {}
     },
   }
 
-  return { index: Math.min(index, Math.max(count - 1, 0)), goTo, next, prev, regionProps }
+  const current = Math.min(index, Math.max(count - 1, 0))
+  const upcoming = count > 1 ? (current + 1) % count : current
+  const [revealed, setRevealed] = useState(() => new Set([0, 1]))
+  if (!revealed.has(current) || !revealed.has(upcoming)) {
+    setRevealed(new Set([...revealed, current, upcoming]))
+  }
+  const isRevealed = (slideIndex) => revealed.has(slideIndex)
+
+  return { index: current, goTo, next, prev, isRevealed, regionProps }
 }

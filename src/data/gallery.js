@@ -10,11 +10,11 @@
 */
 
 export const GALLERY_HERO_SLIDES = [
-  { image: 'gallery/gallery-1', alt: 'IT Association gallery photo 1' },
-  { image: 'gallery/gallery-2', alt: 'IT Association gallery photo 2' },
-  { image: 'gallery/gallery-3', alt: 'IT Association gallery photo 3' },
-  { image: 'gallery/gallery-4', alt: 'IT Association gallery photo 4' },
-  { image: 'gallery/gallery-5', alt: 'IT Association gallery photo 5' },
+  { image: 'gallery/gallery-1', alt: 'IT Students Association gallery photo 1' },
+  { image: 'gallery/gallery-2', alt: 'IT Students Association gallery photo 2' },
+  { image: 'gallery/gallery-3', alt: 'IT Students Association gallery photo 3' },
+  { image: 'gallery/gallery-4', alt: 'IT Students Association gallery photo 4' },
+  { image: 'gallery/gallery-5', alt: 'IT Students Association gallery photo 5' },
 ]
 
 export const GALLERY_SECTIONS = [
@@ -48,7 +48,7 @@ export const GALLERY_SECTIONS = [
         category: 'CELEBRATION',
         title: "Teachers' Day",
         description:
-          'A special celebration dedicated to appreciating the teachers who guide, inspire and shape the students of the IT Association.',
+          'A special celebration dedicated to appreciating the teachers who guide, inspire and shape the students of the IT Students Association.',
         photos: [
           { image: 'gallery/gallery-1', alt: 'Teachers Day celebration' },
           { image: 'gallery/gallery-5', alt: 'Teachers Day celebration' },
@@ -60,12 +60,12 @@ export const GALLERY_SECTIONS = [
         id: 'inaugural-2026',
         date: '29 JUL 2026',
         category: 'INAUGURAL',
-        title: 'Inaugural of IT Association 2026',
+        title: 'Inaugural of IT Students Association 2026',
         description:
-          'The beginning of another exciting year of learning, collaboration, innovation and student activities with the IT Association.',
+          'The beginning of another exciting year of learning, collaboration, innovation and student activities with the IT Students Association.',
         photos: [
-          { image: 'gallery/inaugural-1', alt: 'Inaugural of IT Association 2026' },
-          { image: 'gallery/inaugural-2', alt: 'Inaugural of IT Association 2026' },
+          { image: 'gallery/inaugural-1', alt: 'Inaugural of IT Students Association 2026' },
+          { image: 'gallery/inaugural-2', alt: 'Inaugural of IT Students Association 2026' },
         ],
         driveLabel: 'VIEW EVENT PHOTOS',
         driveUrl: null,
