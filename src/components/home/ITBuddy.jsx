@@ -31,6 +31,30 @@ export default function ITBuddy() {
   const reactionTimer = useRef(null)
   const dragRef = useRef(null)
   const widgetRef = useRef(null)
+  const panelRef = useRef(null)
+  const speechBubbleRef = useRef(null)
+
+  const clampPosition = (left, top) => {
+    const widget = widgetRef.current
+    if (!widget) return { left, top }
+
+    const maxLeft = Math.max(0, window.innerWidth - widget.offsetWidth)
+    const maxTop = Math.max(0, window.innerHeight - widget.offsetHeight)
+    const attachedBox = isOpen ? panelRef.current : speechBubbleRef.current
+    const boxRect = attachedBox?.getBoundingClientRect()
+    const gap = isOpen ? 10 : 8
+    const minLeft = boxRect
+      ? Math.min(maxLeft, Math.max(0, boxRect.width - widget.offsetWidth))
+      : 0
+    const minTop = boxRect
+      ? Math.min(maxTop, boxRect.height + gap)
+      : 0
+
+    return {
+      left: Math.min(maxLeft, Math.max(minLeft, left)),
+      top: Math.min(maxTop, Math.max(minTop, top)),
+    }
+  }
 
   const showReaction = (nextMood, message, duration = 1500) => {
     setMood(nextMood)
@@ -51,18 +75,15 @@ export default function ITBuddy() {
       const widget = widgetRef.current
       if (!widget) return
 
-      const maxLeft = Math.max(0, window.innerWidth - widget.offsetWidth)
-      const maxTop = Math.max(0, window.innerHeight - widget.offsetHeight)
-
       setPosition((current) => {
-        if (!current) return current
-        const left = Number.isFinite(current.left) ? current.left : maxLeft
-        const top = Number.isFinite(current.top) ? current.top : maxTop
-        const next = {
-          left: Math.min(maxLeft, Math.max(0, left)),
-          top: Math.min(maxTop, Math.max(0, top)),
-        }
-        if (next.left === current.left && next.top === current.top) return current
+        const left = Number.isFinite(current?.left)
+          ? current.left
+          : window.innerWidth - widget.offsetWidth - 14
+        const top = Number.isFinite(current?.top)
+          ? current.top
+          : window.innerHeight - widget.offsetHeight - 12
+        const next = clampPosition(left, top)
+        if (current && next.left === current.left && next.top === current.top) return current
         return next
       })
     }
@@ -73,7 +94,7 @@ export default function ITBuddy() {
       window.cancelAnimationFrame(frame)
       window.removeEventListener('resize', keepBotOnScreen)
     }
-  }, [])
+  }, [isOpen, reactionMessage])
 
   useEffect(() => {
     const handleUniversalClick = (event) => {
@@ -132,12 +153,7 @@ export default function ITBuddy() {
     const widget = widgetRef.current
     if (!widget) return
 
-    const maxLeft = Math.max(0, window.innerWidth - widget.offsetWidth)
-    const maxTop = Math.max(0, window.innerHeight - widget.offsetHeight)
-    setPosition({
-      left: Math.min(maxLeft, Math.max(0, drag.startLeft + deltaX)),
-      top: Math.min(maxTop, Math.max(0, drag.startTop + deltaY)),
-    })
+    setPosition(clampPosition(drag.startLeft + deltaX, drag.startTop + deltaY))
   }
 
   const finishDrag = (event, canceled = false) => {
@@ -181,7 +197,7 @@ export default function ITBuddy() {
       style={positionStyle}
     >
       {isOpen && (
-        <section className={s.panel} aria-labelledby="it-buddy-title">
+        <section ref={panelRef} className={s.panel} aria-labelledby="it-buddy-title">
           <div className={s.panelHeader}>
             <div>
               <p className={s.eyebrow}>YOUR CODING BUDDY</p>
@@ -224,9 +240,11 @@ export default function ITBuddy() {
         aria-expanded={isOpen}
         aria-controls="it-buddy-title"
       >
-        <span className={s.speechBubble} aria-live="polite" aria-atomic="true">
-          {reactionMessage || (isOpen ? 'Let’s go!' : 'Need a hand?')}
-        </span>
+        {!isOpen && (
+          <span ref={speechBubbleRef} className={s.speechBubble} aria-live="polite" aria-atomic="true">
+            {reactionMessage || 'Need a hand?'}
+          </span>
+        )}
 
         <svg
           className={`${s.bot} ${mood === 'dance' ? s.dancing : ''} ${mood === 'smile' ? s.smiling : ''}`}
