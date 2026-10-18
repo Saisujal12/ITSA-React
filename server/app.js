@@ -46,6 +46,24 @@ const localOrigins = [
 ];
 
 function isAllowedOrigin(origin) {
+  // Local Vite may move to another port when its default port is busy.
+  // Allow loopback development origins on any port.
+  try {
+    const url = new URL(origin);
+    const hostname = url.hostname.toLowerCase();
+    const isLoopback =
+      hostname === "localhost" ||
+      hostname === "127.0.0.1" ||
+      hostname === "[::1]" ||
+      hostname === "::1";
+
+    if (url.protocol === "http:" && isLoopback) {
+      return true;
+    }
+  } catch {
+    // Continue to explicit origins and Vercel origin checks.
+  }
+
   // Allow requests without an Origin header,
   // such as server-to-server requests.
   if (!origin) {
@@ -185,8 +203,12 @@ app.use((req, res) => {
 // Central error handler
 // --------------------------------------------------
 
-app.use((error, req, res) => {
+app.use((error, req, res, next) => {
   console.error("API error:", error);
+
+  if (res.headersSent) {
+    return next(error);
+  }
 
   if (
     error?.message?.startsWith(

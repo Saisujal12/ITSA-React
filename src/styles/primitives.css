@@ -128,3 +128,69 @@
     padding: 70px 0;
   }
 }
+
+/* Playful button feedback across the site */
+button,
+.btn,
+[role='button'] {
+  transform-origin: center;
+}
+
+button:hover,
+.btn:hover,
+[role='button']:hover {
+  animation: button-dance 420ms ease-in-out;
+}
+
+button:active,
+.btn:active,
+[role='button']:active {
+  animation: button-happy-bounce 280ms ease-out;
+}
+
+@keyframes button-dance {
+  0%, 100% {
+    transform: translateY(0) rotate(0);
+  }
+
+  25% {
+    transform: translateY(-3px) rotate(-2deg);
+  }
+
+  50% {
+    transform: translateY(0) rotate(2deg);
+  }
+
+  75% {
+    transform: translateY(-2px) rotate(-1deg);
+  }
+}
+
+@keyframes button-happy-bounce {
+  0% {
+    transform: scale(1);
+  }
+
+  45% {
+    transform: scale(0.94);
+  }
+
+  75% {
+    transform: scale(1.06);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button:hover,
+  .btn:hover,
+  [role='button']:hover,
+  button:active,
+  .btn:active,
+  [role='button']:active {
+    animation: none;
+  }
+}

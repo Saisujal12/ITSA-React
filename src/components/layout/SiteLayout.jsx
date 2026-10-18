@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { Outlet, ScrollRestoration, useLocation } from 'react-router'
 import { useReveal } from '../../hooks/useReveal'
+import ITBuddy from '../home/ITBuddy'
 import Footer from './Footer'
 import Navbar from './Navbar'
 import Sponsor from './Sponsor'
@@ -12,15 +13,16 @@ export default function SiteLayout() {
   const previousPath = useRef(pathname)
 
   useReveal(mainRef, pathname + search)
+
   const showSponsor =
     pathname === '/' ||
     pathname === '/workshops' ||
     pathname === '/events' ||
     pathname.startsWith('/register')
 
-  // Move keyboard/screen-reader focus to the new page after client-side navigation.
   useEffect(() => {
     if (previousPath.current === pathname) return
+
     previousPath.current = pathname
     mainRef.current?.focus({ preventScroll: true })
   }, [pathname])
@@ -30,12 +32,17 @@ export default function SiteLayout() {
       <a className={s.skipLink} href="#main">
         Skip to content
       </a>
+
       <Navbar />
+
       <main id="main" ref={mainRef} tabIndex={-1} className={s.main}>
         <Outlet />
       </main>
+
       {showSponsor && <Sponsor />}
+
       <Footer />
+      <ITBuddy />
       <ScrollRestoration />
     </>
   )

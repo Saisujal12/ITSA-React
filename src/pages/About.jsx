@@ -248,7 +248,7 @@ export default function About() {
         </div>
       </section>
 
-      <section className={s.teamSection} aria-labelledby="team-title">
+      <section id="team" className={s.teamSection} aria-labelledby="team-title">
         <div className={cx(s.teamHeading, s.associationBodyHeading)} data-reveal="">
           <div>
             <span>ITSA · KITSW</span>
